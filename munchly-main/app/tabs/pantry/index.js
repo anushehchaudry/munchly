@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FOOD_CATEGORIES } from "@/utils/constants";
+import theme from "@/assets/theme"; // Import the theme
 
 const STORAGE_KEY = "@pantryData";
 
@@ -84,7 +85,12 @@ const PantryScreen = () => {
   }));
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme.colors.backgroundPrimary },
+      ]}
+    >
       <SectionList
         sections={sections}
         keyExtractor={(item, index) => item.name + index}
@@ -110,6 +116,7 @@ const PantryScreen = () => {
                 setCurrentCategory(section.title);
                 setIsAdding(true);
               }}
+              color={theme.colors.iconHighlighted}
             />
           </View>
         )}
@@ -123,6 +130,7 @@ const PantryScreen = () => {
             placeholder="Item Name"
             value={newItemName}
             onChangeText={setNewItemName}
+            placeholderTextColor={theme.colors.textPrimary}
           />
           <TextInput
             style={styles.input}
@@ -130,8 +138,13 @@ const PantryScreen = () => {
             value={newItemQuantity}
             onChangeText={setNewItemQuantity}
             keyboardType="numeric"
+            placeholderTextColor={theme.colors.textPrimary}
           />
-          <Button title="Add" onPress={handleAddItem} />
+          <Button
+            title="Add"
+            onPress={handleAddItem}
+            color={theme.colors.iconHighlighted}
+          />
           <Button
             title="Cancel"
             onPress={() => {
@@ -148,16 +161,24 @@ const PantryScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10 },
+  container: {
+    flex: 1,
+    padding: 10,
+  },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#f9f9f9",
+    backgroundColor: theme.colors.iconPrimary,
     padding: 10,
     marginVertical: 5,
   },
-  sectionTitle: { fontSize: 18, fontWeight: "bold" },
+  sectionTitle: {
+    fontSize: theme.sizes.textLarge,
+    fontWeight: "bold",
+    fontFamily: theme.fonts.fontPrimary,
+    color: theme.colors.textPrimary,
+  },
   item: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -166,20 +187,28 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },
-  itemText: { fontSize: 16 },
+  itemText: {
+    fontSize: theme.sizes.textMedium,
+    fontFamily: theme.fonts.fontPrimary,
+    color: theme.colors.textPrimary,
+  },
   deleteButton: {
     paddingHorizontal: 10,
     paddingVertical: 5,
-    backgroundColor: "red",
+    backgroundColor: theme.colors.iconHighlighted,
     borderRadius: 5,
   },
-  deleteButtonText: { color: "#fff", fontWeight: "bold" },
+  deleteButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontFamily: theme.fonts.fontPrimary,
+  },
   addItemModal: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: "#fff",
+    backgroundColor: theme.colors.backgroundPrimary,
     padding: 20,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
@@ -188,15 +217,25 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
   },
-  modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
+  modalTitle: {
+    fontSize: theme.sizes.textLarge,
+    fontWeight: "bold",
+    marginBottom: 10,
+    fontFamily: theme.fonts.fontPrimary,
+    color: theme.colors.textPrimary,
+  },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: theme.colors.iconPrimary,
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
+    fontFamily: theme.fonts.fontPrimary,
+    color: theme.colors.textPrimary,
   },
-  list: { paddingBottom: 50 },
+  list: {
+    paddingBottom: 50,
+  },
 });
 
 export default PantryScreen;
