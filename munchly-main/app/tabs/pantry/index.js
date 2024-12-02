@@ -1,7 +1,9 @@
+// app/tabs/pantry/index.js
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Button } from "react-native";
 import PantryList from "@/components/PantryList";
 import AddPantryItem from "@/components/AddPantryItem";
+import GroceryList from "@/components/GroceryList";
 import { loadPantryData, savePantryData } from "@/components/PantryStorage";
 import { FOOD_CATEGORIES } from "@/utils/constants";
 import theme from "@/assets/theme";
@@ -17,6 +19,7 @@ const PantryScreen = () => {
   const [newItemName, setNewItemName] = useState("");
   const [newItemQuantity, setNewItemQuantity] = useState("");
   const [isAdding, setIsAdding] = useState(false);
+  const [isGroceryListVisible, setIsGroceryListVisible] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -60,11 +63,6 @@ const PantryScreen = () => {
     savePantryData(updatedPantry);
   };
 
-  const sections = FOOD_CATEGORIES.map((category) => ({
-    title: category,
-    data: pantry[category] || [],
-  }));
-
   return (
     <View
       style={[
@@ -73,7 +71,10 @@ const PantryScreen = () => {
       ]}
     >
       <PantryList
-        sections={sections}
+        sections={FOOD_CATEGORIES.map((category) => ({
+          title: category,
+          data: pantry[category] || [],
+        }))}
         onAddItem={handleAddItem}
         onDeleteItem={handleDeleteItem}
         onEditItem={handleEditItem}
@@ -87,6 +88,17 @@ const PantryScreen = () => {
         onQuantityChange={setNewItemQuantity}
         onAdd={handleSaveItem}
         onCancel={() => setIsAdding(false)}
+      />
+      <Button
+        title="Open Grocery List"
+        onPress={() => setIsGroceryListVisible(true)}
+        color={theme.colors.iconHighlighted}
+      />
+      <GroceryList
+        visible={isGroceryListVisible}
+        onClose={() => setIsGroceryListVisible(false)}
+        pantry={pantry}
+        setPantry={setPantry}
       />
     </View>
   );
