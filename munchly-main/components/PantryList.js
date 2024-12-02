@@ -3,7 +3,7 @@ import { SectionList, View, Text, Button, StyleSheet } from "react-native";
 import PantryItem from "./PantryItem";
 import theme from "@/assets/theme";
 
-const PantryList = ({ sections, onAddItem, onDeleteItem }) => {
+const PantryList = ({ sections, onAddItem, onDeleteItem, onEditItem }) => {
   return (
     <SectionList
       sections={sections}
@@ -12,6 +12,9 @@ const PantryList = ({ sections, onAddItem, onDeleteItem }) => {
         <PantryItem
           item={item}
           onDelete={() => onDeleteItem(section.title, index)}
+          onEdit={(newName, newQuantity) =>
+            onEditItem(section.title, index, newName, newQuantity)
+          }
         />
       )}
       renderSectionHeader={({ section }) => (

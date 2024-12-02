@@ -53,6 +53,13 @@ const PantryScreen = () => {
     savePantryData(updatedPantry);
   };
 
+  const handleEditItem = (category, index, newName, newQuantity) => {
+    const updatedPantry = { ...pantry };
+    updatedPantry[category][index] = { name: newName, quantity: newQuantity };
+    setPantry(updatedPantry);
+    savePantryData(updatedPantry);
+  };
+
   const sections = FOOD_CATEGORIES.map((category) => ({
     title: category,
     data: pantry[category] || [],
@@ -69,6 +76,7 @@ const PantryScreen = () => {
         sections={sections}
         onAddItem={handleAddItem}
         onDeleteItem={handleDeleteItem}
+        onEditItem={handleEditItem}
       />
       <AddPantryItem
         visible={isAdding}
