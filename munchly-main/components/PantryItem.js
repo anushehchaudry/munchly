@@ -33,7 +33,7 @@ const PantryItem = ({ item, onDelete, onEdit }) => {
       >
         <MaterialIcons
           name="more-vert"
-          size={theme.sizes.iconMedium}
+          size={theme.sizes.iconSmall}
           color={theme.colors.textPrimary}
         />
       </TouchableOpacity>
@@ -58,6 +58,12 @@ const PantryItem = ({ item, onDelete, onEdit }) => {
             }}
           >
             <Text style={styles.menuText}>Edit</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => setMenuVisible(false)} // Close menu
+          >
+            <Text style={styles.menuText}>Cancel</Text>
           </TouchableOpacity>
         </View>
       )}
