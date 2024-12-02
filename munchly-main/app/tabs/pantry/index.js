@@ -59,7 +59,12 @@ const PantryScreen = () => {
   }));
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme.colors.backgroundPrimary },
+      ]}
+    >
       <PantryList
         sections={sections}
         onAddItem={handleAddItem}
@@ -82,7 +87,6 @@ const PantryScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundPrimary,
   },
 });
 

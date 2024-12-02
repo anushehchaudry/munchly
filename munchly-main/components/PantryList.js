@@ -1,12 +1,6 @@
 import React from "react";
-import {
-  SectionList,
-  Text,
-  View,
-  Button,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import { SectionList, View, Text, Button, StyleSheet } from "react-native";
+import PantryItem from "./PantryItem";
 import theme from "@/assets/theme";
 
 const PantryList = ({ sections, onAddItem, onDeleteItem }) => {
@@ -15,21 +9,14 @@ const PantryList = ({ sections, onAddItem, onDeleteItem }) => {
       sections={sections}
       keyExtractor={(item, index) => item.name + index}
       renderItem={({ item, section, index }) => (
-        <View style={styles.item}>
-          <Text style={styles.itemText}>
-            {item.name} - {item.quantity}
-          </Text>
-          <TouchableOpacity
-            style={styles.deleteButton}
-            onPress={() => onDeleteItem(section.title, index)}
-          >
-            <Text style={styles.deleteButtonText}>Delete</Text>
-          </TouchableOpacity>
-        </View>
+        <PantryItem
+          item={item}
+          onDelete={() => onDeleteItem(section.title, index)}
+        />
       )}
       renderSectionHeader={({ section }) => (
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>{section.title}</Text>
+        <View style={styles.header}>
+          <Text style={styles.title}>{section.title}</Text>
           <Button
             title="Add Item"
             onPress={() => onAddItem(section.title)}
@@ -43,7 +30,7 @@ const PantryList = ({ sections, onAddItem, onDeleteItem }) => {
 };
 
 const styles = StyleSheet.create({
-  sectionHeader: {
+  header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -51,35 +38,11 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 5,
   },
-  sectionTitle: {
+  title: {
     fontSize: theme.sizes.textLarge,
     fontWeight: "bold",
     fontFamily: theme.fonts.fontPrimary,
     color: theme.colors.textPrimary,
-  },
-  item: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-  },
-  itemText: {
-    fontSize: theme.sizes.textMedium,
-    fontFamily: theme.fonts.fontPrimary,
-    color: theme.colors.textPrimary,
-  },
-  deleteButton: {
-    backgroundColor: theme.colors.iconHighlighted,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 5,
-  },
-  deleteButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontFamily: theme.fonts.fontPrimary,
   },
   list: {
     paddingBottom: 50,
