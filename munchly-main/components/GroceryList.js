@@ -1,5 +1,4 @@
-// components/GroceryList.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,10 +8,14 @@ import {
   Modal,
   TouchableOpacity,
   FlatList,
+  ScrollView,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import theme from "@/assets/theme";
 import { FOOD_CATEGORIES } from "@/utils/constants";
+
+const STORAGE_KEY = "@groceryListData";
 
 const GroceryList = ({ visible, onClose, pantry, setPantry }) => {
   const [groceryList, setGroceryList] = useState([]);
@@ -20,16 +23,43 @@ const GroceryList = ({ visible, onClose, pantry, setPantry }) => {
   const [newItemQuantity, setNewItemQuantity] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(FOOD_CATEGORIES[0]);
 
+  useEffect(() => {
+    const loadGroceryList = async () => {
+      try {
+        const storedData = await AsyncStorage.getItem(STORAGE_KEY);
+        if (storedData) {
+          setGroceryList(JSON.parse(storedData));
+        }
+      } catch (error) {
+        console.error("Failed to load grocery list data:", error);
+      }
+    };
+
+    if (visible) {
+      loadGroceryList();
+    }
+  }, [visible]);
+
+  const saveGroceryList = async (list) => {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    } catch (error) {
+      console.error("Failed to save grocery list data:", error);
+    }
+  };
+
   const handleAddItem = () => {
     if (newItemName && newItemQuantity) {
-      setGroceryList([
+      const updatedGroceryList = [
         ...groceryList,
         {
           name: newItemName,
           quantity: newItemQuantity,
           category: selectedCategory,
         },
-      ]);
+      ];
+      setGroceryList(updatedGroceryList);
+      saveGroceryList(updatedGroceryList);
       setNewItemName("");
       setNewItemQuantity("");
       setSelectedCategory(FOOD_CATEGORIES[0]);
@@ -57,6 +87,9 @@ const GroceryList = ({ visible, onClose, pantry, setPantry }) => {
 
     setPantry(updatedPantry);
     setGroceryList(
+      groceryList.filter((groceryItem) => groceryItem.name !== item.name)
+    );
+    saveGroceryList(
       groceryList.filter((groceryItem) => groceryItem.name !== item.name)
     );
   };
@@ -108,6 +141,7 @@ const GroceryList = ({ visible, onClose, pantry, setPantry }) => {
                 </TouchableOpacity>
               </View>
             )}
+            style={styles.list}
           />
           <Button title="Close" onPress={onClose} color="red" />
         </View>
@@ -128,6 +162,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     alignItems: "center",
+    maxHeight: "80%", // Ensure the modal doesn't overflow
   },
   title: {
     fontSize: theme.sizes.textLarge,
@@ -171,6 +206,9 @@ const styles = StyleSheet.create({
   checkButton: {
     fontSize: theme.sizes.textLarge,
     color: theme.colors.iconHighlighted,
+  },
+  list: {
+    width: "100%",
   },
 });
 
