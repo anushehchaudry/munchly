@@ -10,47 +10,55 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import theme from "@/assets/theme";
+import { FOOD_CATEGORIES } from "@/utils/constants";
 
 const GroceryList = ({ visible, onClose, pantry, setPantry }) => {
   const [groceryList, setGroceryList] = useState([]);
   const [newItemName, setNewItemName] = useState("");
   const [newItemQuantity, setNewItemQuantity] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(FOOD_CATEGORIES[0]);
 
   const handleAddItem = () => {
     if (newItemName && newItemQuantity) {
       setGroceryList([
         ...groceryList,
-        { name: newItemName, quantity: newItemQuantity },
+        {
+          name: newItemName,
+          quantity: newItemQuantity,
+          category: selectedCategory,
+        },
       ]);
       setNewItemName("");
       setNewItemQuantity("");
+      setSelectedCategory(FOOD_CATEGORIES[0]);
     }
   };
 
   const handleCheckItem = (item) => {
-    const updatedGroceryList = groceryList.filter(
-      (groceryItem) => groceryItem.name !== item.name
-    );
-    setGroceryList(updatedGroceryList);
-
     const updatedPantry = { ...pantry };
-    const category = Object.keys(updatedPantry).find((cat) =>
-      updatedPantry[cat].some((pantryItem) => pantryItem.name === item.name)
-    );
+    const category = item.category;
 
     if (category) {
       const pantryItem = updatedPantry[category].find(
         (pantryItem) => pantryItem.name === item.name
       );
-      pantryItem.quantity =
-        parseInt(pantryItem.quantity) + parseInt(item.quantity);
+      if (pantryItem) {
+        pantryItem.quantity =
+          parseInt(pantryItem.quantity) + parseInt(item.quantity);
+      } else {
+        updatedPantry[category].push(item);
+      }
     } else {
       updatedPantry["Miscellaneous"] = updatedPantry["Miscellaneous"] || [];
       updatedPantry["Miscellaneous"].push(item);
     }
 
     setPantry(updatedPantry);
+    setGroceryList(
+      groceryList.filter((groceryItem) => groceryItem.name !== item.name)
+    );
   };
 
   return (
@@ -73,6 +81,15 @@ const GroceryList = ({ visible, onClose, pantry, setPantry }) => {
             keyboardType="numeric"
             placeholderTextColor={theme.colors.textPrimary}
           />
+          <Picker
+            selectedValue={selectedCategory}
+            onValueChange={(itemValue) => setSelectedCategory(itemValue)}
+            style={styles.picker}
+          >
+            {FOOD_CATEGORIES.map((category) => (
+              <Picker.Item key={category} label={category} value={category} />
+            ))}
+          </Picker>
           <Button
             title="Add"
             onPress={handleAddItem}
@@ -128,6 +145,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontFamily: theme.fonts.fontPrimary,
     color: theme.colors.textPrimary,
+  },
+  picker: {
+    width: "100%",
+    borderWidth: 1,
+    borderColor: theme.colors.iconPrimary,
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
   },
   groceryItem: {
     flexDirection: "row",
