@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,7 +9,10 @@ import {
   SectionList,
   Alert,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FOOD_CATEGORIES } from "@/utils/constants";
+
+const STORAGE_KEY = "@pantryData";
 
 const PantryScreen = () => {
   const [pantry, setPantry] = useState(
@@ -23,10 +26,33 @@ const PantryScreen = () => {
   const [newItemQuantity, setNewItemQuantity] = useState("");
   const [isAdding, setIsAdding] = useState(false);
 
-  const sections = Object.keys(pantry).map((category) => ({
-    title: category,
-    data: pantry[category],
-  }));
+  // Load pantry data from AsyncStorage on mount
+  useEffect(() => {
+    const loadPantryData = async () => {
+      try {
+        const storedData = await AsyncStorage.getItem(STORAGE_KEY);
+        if (storedData) {
+          const parsedData = JSON.parse(storedData);
+
+          // Ensure all categories are present
+          const fullData = { ...pantry, ...parsedData };
+          setPantry(fullData);
+        }
+      } catch (error) {
+        console.error("Failed to load pantry data:", error);
+      }
+    };
+    loadPantryData();
+  }, []);
+
+  // Save pantry data to AsyncStorage
+  const savePantryData = async (updatedPantry) => {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedPantry));
+    } catch (error) {
+      console.error("Failed to save pantry data:", error);
+    }
+  };
 
   const handleAddItem = () => {
     if (newItemName && newItemQuantity) {
@@ -36,6 +62,7 @@ const PantryScreen = () => {
         quantity: newItemQuantity,
       });
       setPantry(updatedPantry);
+      savePantryData(updatedPantry); // Persist the updated pantry to AsyncStorage
       setNewItemName("");
       setNewItemQuantity("");
       setIsAdding(false);
@@ -48,7 +75,13 @@ const PantryScreen = () => {
     const updatedPantry = { ...pantry };
     updatedPantry[category].splice(index, 1);
     setPantry(updatedPantry);
+    savePantryData(updatedPantry); // Persist the updated pantry to AsyncStorage
   };
+
+  const sections = FOOD_CATEGORIES.map((category) => ({
+    title: category,
+    data: pantry[category] || [], // Ensure all categories are displayed, even if empty
+  }));
 
   return (
     <View style={styles.container}>
