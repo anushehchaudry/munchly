@@ -14,7 +14,7 @@ export default function SearchLayout() {
       }}
     >
       <Stack.Screen
-        name="home"
+        name="index"
         options={{
           headerTitle: () => (
             <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -36,6 +36,14 @@ export default function SearchLayout() {
           ),
           headerTitleAlign: "center",
         }}
+      />
+      <Stack.Screen
+        name="results"
+        options={{
+          headerTitle: "Results",
+          //tabBarButton: () => null, // Hide tab bar for this screen
+        }}
+        headerShown={true}
       />
     </Stack>
   );
