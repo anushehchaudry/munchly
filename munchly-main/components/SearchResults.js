@@ -11,7 +11,7 @@ import {
 } from "react-native";
 //import millisToMinutesAndSeconds from "./utils/millisToMinutesAndSeconds";
 import Theme from "@/assets/theme";
-
+// git branch emma
 const windowWidth = Dimensions.get("window").width;
 
 const SearchResults = (props) => {
