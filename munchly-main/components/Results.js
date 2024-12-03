@@ -15,6 +15,7 @@ import Theme from "@/assets/theme";
 
 const windowWidth = Dimensions.get("window").width;
 
+// tessssting minor change
 const Results = (props) => {
   const [recipes, setRecipes] = useState([]); // list of recipes that will be shown
   const [offset, setOffset] = useState(0); // offset
