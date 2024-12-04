@@ -9,41 +9,51 @@ import {
   View,
   TouchableOpacity,
 } from "react-native";
-//import millisToMinutesAndSeconds from "./utils/millisToMinutesAndSeconds";
+import React, { useState, useEffect } from "react";
+import {
+  saveItem,
+  removeItem,
+  getSavedItems,
+} from "../utils/asyncStorageUtils";
+import getEnv from "../utils/env";
 import Theme from "@/assets/theme";
-// git branch emma
 const windowWidth = Dimensions.get("window").width;
 
-const SearchResults = (props) => {
-  const foodIndex = props.index + 1;
-  const title = props.title;
-  const image = props.image;
-  //console.log("tot url", props.image)
-  const imageType = props.imageType;
-  // let duration = props.duration;
-  // duration = millisToMinutesAndSeconds(duration);
-  // const externalUrl = props.externalUrl;
+const SearchResults = ({ id, title, image, isSaved, refreshRecipes }) => {
+  const handleToggleSave = async () => {
+    if (!isSaved) {
+      await saveItem({ id, title, image }); // Save item
+    } else {
+      await removeItem(id); // Remove item
+    }
+    // Trigger the parent refresh function
+    refreshRecipes();
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.rowContainer}>
-        <Text style={styles.indexText}>{foodIndex}</Text>
         <Image source={{ uri: image }} style={styles.image} />
         <View style={styles.recipeSave}>
           <Text style={styles.recipeName} numberOfLines={3}>
             {title}
           </Text>
-          <Text style={styles.save}>Save</Text>
+          <TouchableOpacity
+            style={[
+              styles.saveButton,
+              isSaved ? styles.savedState : styles.unsavedState,
+            ]}
+            onPress={handleToggleSave}
+          >
+            <Text style={isSaved ? styles.savedText : styles.unsavedText}>
+              {isSaved ? "Saved!" : "Save"}
+            </Text>
+          </TouchableOpacity>
         </View>
-        {/* <Text style={styles.recipeName} numberOfLines={3}>
-            {title}
-          </Text> */}
       </View>
     </SafeAreaView>
   );
 };
-// save button, flex col under recipename
-
 export default SearchResults;
 
 const styles = StyleSheet.create({
@@ -64,30 +74,57 @@ const styles = StyleSheet.create({
   },
   recipeName: {
     flex: 1,
+    //paddingTop: 20,
     paddingLeft: 10,
     color: "black",
     // alignItems: "flex-end",
     textAlign: "left",
+    flexShrink: 1,
   },
   recipeSave: {
+    // container for recipe title and save button
     flex: 1,
     flexDirection: "column",
-    // alignItems: "center"
+    justifyContent: "space-between",
+    height: "100%",
+    paddingTop: 10,
+    paddingBottom: 10,
   },
-  save: {
-    backgroundColor: Theme.colors.iconPrimary,
-    color: "white",
-    padding: 10,
+  saveButton: {
     alignSelf: "center",
-    paddingHorizontal: 40,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
     borderRadius: 20,
+    borderWidth: 2, // Border to make unsaved state visually clear
+  },
+  savedState: {
+    backgroundColor: Theme.colors.iconPrimary, // Current green background for toggled state
+    borderColor: Theme.colors.iconPrimary, // Match border to background
+  },
+  unsavedState: {
+    backgroundColor: "transparent", // No background for untoggled state
+    borderColor: "green", // Green border for untoggled state
+  },
+  savedText: {
+    color: "white", // White text when toggled
+  },
+  unsavedText: {
+    color: "black", // Black text when untoggled
   },
   indexText: {
-    color: "gray",
-    paddingTop: 10,
-    paddingRight: 20,
-    fontSize: 10,
-    width: 10,
+    color: "white",
+    backgroundColor: Theme.colors.iconPrimary,
+    fontSize: 12,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    textAlign: "center",
+    lineHeight: 24,
+    marginRight: 10,
+    // paddingTop: 10,
+    // paddingRight: 20,
+    // fontSize: 10,
+    // width: 10,
   },
   image: {
     width: windowWidth * 0.25,

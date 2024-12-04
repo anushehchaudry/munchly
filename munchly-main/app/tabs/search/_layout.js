@@ -41,6 +41,7 @@ export default function SearchLayout() {
         name="results"
         options={{
           headerTitle: "Results",
+          // headerShown: false,
           //tabBarButton: () => null, // Hide tab bar for this screen
         }}
         headerShown={true}

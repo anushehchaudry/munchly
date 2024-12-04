@@ -12,6 +12,7 @@ import {
 import { fetchData } from "../utils/useSpoonacular";
 import SearchResults from "./SearchResults";
 import Theme from "@/assets/theme";
+import { getSavedItems } from "../utils/asyncStorageUtils";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -42,6 +43,7 @@ const Results = (props) => {
 
     try {
       // fetch data and get 20 results at a time
+      const savedItems = await getSavedItems();
       const results = await fetchData(query, offset);
       console.log("look", offset);
       const newRecipes = results.results.map((recipe) => ({
@@ -49,6 +51,7 @@ const Results = (props) => {
         title: recipe.title,
         image: recipe.image,
         imageType: recipe.imageType,
+        isSaved: savedItems.some((savedItem) => savedItem.id === recipe.id), // Check if saved
       }));
       setRecipes((existent) => {
         const uniqueRecipes = new Map(
@@ -63,7 +66,15 @@ const Results = (props) => {
       console.log("Unable to fetch.", error);
     }
   };
-
+  const refreshRecipes = async () => {
+    const savedItems = await getSavedItems(); // Get updated saved items
+    setRecipes((currentRecipes) =>
+      currentRecipes.map((recipe) => ({
+        ...recipe,
+        isSaved: savedItems.some((savedItem) => savedItem.id === recipe.id), // Recalculate saved state
+      }))
+    );
+  };
   // implementation for infinite scroll
   const fetchNextPage = async () => {
     setFetching(true);
@@ -72,11 +83,13 @@ const Results = (props) => {
       const nextOffset = offset + limit; // Calculate the next offset
       setOffset(nextOffset); // update offset
       const results = await fetchData(query, offset); // Fetch with the updated offset
+      const savedItems = await getSavedItems();
       const newRecipes = results.results.map((recipe) => ({
         id: recipe.id,
         title: recipe.title,
         image: recipe.image,
         imageType: recipe.imageType,
+        isSaved: savedItems.some((savedItem) => savedItem.id === recipe.id),
       }));
       // Append unique results
       setRecipes((existent) => {
@@ -119,10 +132,13 @@ const Results = (props) => {
       data={recipes}
       renderItem={({ item, index }) => (
         <SearchResults
+          id={item.id}
           index={index}
           title={item.title}
           image={item.image}
           imageType={item.imageType}
+          isSaved={item.isSaved}
+          refreshRecipes={refreshRecipes}
         />
       )}
       keyExtractor={(item) => `${item.id}`}

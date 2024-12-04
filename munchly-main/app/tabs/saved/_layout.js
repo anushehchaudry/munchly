@@ -7,15 +7,20 @@ export default function SavedLayout() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: Theme.colors.backgroundPrimary },
-        headerTintColor: Theme.colors.textPrimary,
+        headerStyle: { backgroundColor: Theme.colors.iconPrimary},
+        headerTintColor: "white",
+        headerTitleStyle: {
+          fontSize: 20, 
+          fontWeight: "bold", 
+        },
       }}
     >
       <Stack.Screen
         name="index" // This corresponds to 'index.js' in the profile folder
         options={{
-          headerTitle: "Saved Recipes",
-          headerTitleAlign: "center",
+          headerShown: false,
+          // headerTitle: "Saved Recipes",
+          // headerTitleAlign: "center",
         }}
       />
     </Stack>
