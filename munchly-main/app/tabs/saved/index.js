@@ -27,10 +27,10 @@ export default function Saved() {
     React.useCallback(() => {
       const fetchSavedItems = async () => {
         const items = await getSavedItems();
-        console.log("Saved Items:", items); // Debugging log to inspect data
+        //console.log("Saved Items:", items); 
         setSavedItems(
           items.map((item) => ({ ...item, completed: item.completed || false }))
-        ); // Ensure each item has a `completed` field
+        ); 
         setFlatListKey((prevKey) => (prevKey === "grid" ? "list" : "grid"));
       };
       fetchSavedItems();
@@ -155,10 +155,10 @@ export default function Saved() {
             data={filteredItems}
             keyExtractor={(item, index) =>
               item.id ? item.id.toString() : index.toString()
-            } // Fallback to index if `id` is missing
+            } 
             numColumns={2} // Keep this value constant for a grid
             renderItem={renderGridItem}
-            columnWrapperStyle={styles.row} // Adds spacing between rows
+            columnWrapperStyle={styles.row} 
           />
         )}
       </View>
@@ -169,16 +169,16 @@ export default function Saved() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: Theme.colors.iconPrimary, // Extend green to the top of the screen
+    backgroundColor: Theme.colors.iconPrimary, 
   },
   container: {
     flex: 1,
-    backgroundColor: Theme.colors.backgroundPrimary, // Rest of the screen background
+    backgroundColor: Theme.colors.backgroundPrimary, 
     padding: 16,
     marginTop: -20,
   },
   header: {
-    backgroundColor: Theme.colors.iconPrimary, // Green background
+    backgroundColor: Theme.colors.iconPrimary, 
     paddingVertical: 30,
     paddingHorizontal: 16,
     justifyContent: "center",
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   row: {
-    justifyContent: "space-between", // Distributes items evenly in each row
+    justifyContent: "space-between", 
     marginBottom: 16,
   },
   gridItem: {
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   image: {
-    width: 100, // Adjust size as needed
+    width: 100, 
     height: 100,
     borderRadius: 8,
     marginBottom: 10,
