@@ -112,7 +112,10 @@ const GroceryList = ({ visible, onClose, pantry, setPantry }) => {
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Text style={styles.closeButtonText}>✖</Text>
           </TouchableOpacity>
-          <Text style={styles.title}>Grocery List</Text>
+          {/* Styled Title */}
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Grocery List</Text>
+          </View>
           {/* Input Section */}
           <View style={styles.inputContainer}>
             <DropDownPicker
@@ -211,13 +214,21 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: "red",
   },
-  title: {
-    fontSize: 24, // Larger font size
-    color: theme.colors.textPrimary, // Use primary text color
-    fontWeight: "bold",
-    textAlign: "center",
+  titleContainer: {
+    backgroundColor: theme.colors.backgroundPrimary,
+    borderWidth: 1,
+    borderColor: theme.colors.textPrimary,
+    borderRadius: 25,
+    paddingHorizontal: 15,
+    paddingVertical: 5,
     marginBottom: 20,
+  },
+  title: {
+    fontSize: theme.sizes.textLarge,
+    fontWeight: "bold",
     fontFamily: theme.fonts.fontPrimary,
+    color: theme.colors.textPrimary,
+    textAlign: "center",
   },
   inputContainer: {
     width: "100%",
@@ -247,7 +258,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontFamily: theme.fonts.fontPrimary,
     color: theme.colors.textPrimary,
-    height: 40,
+    height: 40, // Match height of DropDownPicker
   },
   quantityAndButtonRow: {
     flexDirection: "row",
@@ -255,7 +266,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   quantityInput: {
-    flex: 1.0,
+    flex: 0.7,
     borderWidth: 1,
     borderColor: theme.colors.iconPrimary,
     padding: 10,
@@ -263,24 +274,18 @@ const styles = StyleSheet.create({
     fontFamily: theme.fonts.fontPrimary,
     color: theme.colors.textPrimary,
     marginRight: 10,
-    height: 40,
+    height: 40, // Match height of DropDownPicker
   },
   addButton: {
+    flex: 0.35,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     backgroundColor: theme.colors.iconHighlighted,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 2,
-    height: 40,
+    borderRadius: 20,
+    height: 40, // Match height for consistency
   },
   addButtonText: {
-    fontSize: theme.sizes.textMedium - 2,
     color: theme.colors.backgroundPrimary,
     fontWeight: "bold",
     marginLeft: 4,
