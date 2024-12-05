@@ -13,6 +13,7 @@ import { fetchData } from "../utils/useSpoonacular";
 import SearchResults from "./SearchResults";
 import Theme from "@/assets/theme";
 import { getSavedItems } from "../utils/asyncStorageUtils";
+import NoRecipesFound from "./NoRecipesFound";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -24,8 +25,10 @@ const Results = (props) => {
   const [fetching, setFetching] = useState(false);
   // const [totalResults, setTotalResults] = useState(0); // Total results from the API
   const [hasMore, setHasMore] = useState(true); // Track if more results are available
+  const [totalResults, setTotalResults] = useState(0); // Total results from the API
+  const [hitLimit, setHitLimit] = useState(false); // checks if the api has hit limit for fetch
+  const [noResult, setNoResult] = useState(false);
 
-  const SEARCH_ENDPOINT = "https://api.spoonacular.com/recipes/complexSearch";
   let contentDisplayed = null; // this will be the flatlist
   let loading = null; // this is the loading button
   const limit = 20; // temporary limit
@@ -45,6 +48,10 @@ const Results = (props) => {
       // fetch data and get 20 results at a time
       const savedItems = await getSavedItems();
       const results = await fetchData(query, offset);
+      if (results.results.length === 0) {
+        setHasMore(false); // No more data to fetch
+        setNoResult(true);
+      }
       console.log("look", offset);
       const newRecipes = results.results.map((recipe) => ({
         id: recipe.id,
@@ -64,6 +71,7 @@ const Results = (props) => {
       setOffset((prevOffset) => prevOffset + limit);
     } catch (error) {
       console.log("Unable to fetch.", error);
+      setHasMore(false); // Stop fetching if an error occurs
     }
   };
   const refreshRecipes = async () => {
@@ -83,6 +91,10 @@ const Results = (props) => {
       const nextOffset = offset + limit; // Calculate the next offset
       setOffset(nextOffset); // update offset
       const results = await fetchData(query, offset); // Fetch with the updated offset
+      if (results.results.length === 0) {
+        setHasMore(false); // No more data to fetch
+        return;
+      }
       const savedItems = await getSavedItems();
       const newRecipes = results.results.map((recipe) => ({
         id: recipe.id,
@@ -100,6 +112,7 @@ const Results = (props) => {
       });
     } catch (error) {
       console.error("Error fetching next page:", error);
+      setHasMore(false); // Stop fetching if an error occurs
     } finally {
       setFetching(false); // Ensure fetching state is reset
     }
@@ -127,26 +140,30 @@ const Results = (props) => {
     );
   }
 
-  contentDisplayed = (
-    <FlatList
-      data={recipes}
-      renderItem={({ item, index }) => (
-        <SearchResults
-          id={item.id}
-          index={index}
-          title={item.title}
-          image={item.image}
-          imageType={item.imageType}
-          isSaved={item.isSaved}
-          refreshRecipes={refreshRecipes}
-        />
-      )}
-      keyExtractor={(item) => `${item.id}`}
-      onEndReached={fetchNextPage}
-      onEndReachedThreshold={0.5}
-      ListFooterComponent={loading}
-    />
-  );
+  if (noResult) {
+    contentDisplayed = <NoRecipesFound />;
+  } else {
+    contentDisplayed = (
+      <FlatList
+        data={recipes}
+        renderItem={({ item, index }) => (
+          <SearchResults
+            id={item.id}
+            index={index}
+            title={item.title}
+            image={item.image}
+            imageType={item.imageType}
+            isSaved={item.isSaved}
+            refreshRecipes={refreshRecipes}
+          />
+        )}
+        keyExtractor={(item) => `${item.id}`}
+        onEndReached={fetchNextPage}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={loading}
+      />
+    );
+  }
 
   //searchRecipes(query, 20);
 

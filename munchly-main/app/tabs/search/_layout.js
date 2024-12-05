@@ -11,6 +11,8 @@ export default function SearchLayout() {
       screenOptions={{
         headerStyle: { backgroundColor: Theme.colors.backgroundPrimary },
         headerTintColor: Theme.colors.textPrimary,
+        //headerBackTitleVisible: false,
+        headerBackButtonDisplayMode: "minimal",
       }}
     >
       <Stack.Screen
@@ -41,10 +43,10 @@ export default function SearchLayout() {
         name="results"
         options={{
           headerTitle: "Results",
-          // headerShown: false,
+          headerShown: true,
           //tabBarButton: () => null, // Hide tab bar for this screen
         }}
-        headerShown={true}
+        //headerShown={false}
       />
     </Stack>
   );
