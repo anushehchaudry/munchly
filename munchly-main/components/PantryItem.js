@@ -7,9 +7,12 @@ import {
   Modal,
   TextInput,
   Button,
+  Dimensions,
 } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons"; // Import icons from Expo
+import { MaterialIcons } from "@expo/vector-icons";
 import theme from "@/assets/theme";
+
+const { width, height } = Dimensions.get("window");
 
 const PantryItem = ({ item, onDelete, onEdit }) => {
   const [menuVisible, setMenuVisible] = useState(false);
@@ -23,48 +26,56 @@ const PantryItem = ({ item, onDelete, onEdit }) => {
   };
 
   return (
-    <View style={styles.item}>
-      <Text style={styles.text}>
-        {item.name} - {item.quantity}
-      </Text>
-      <TouchableOpacity
-        onPress={() => setMenuVisible(true)}
-        style={styles.optionsButton}
-      >
-        <MaterialIcons
-          name="more-vert"
-          size={theme.sizes.iconSmall}
-          color={theme.colors.textPrimary}
-        />
-      </TouchableOpacity>
+    <>
+      <View style={styles.item}>
+        <Text style={styles.text}>
+          {item.name} - {item.quantity}
+        </Text>
+        <TouchableOpacity
+          onPress={() => setMenuVisible(true)}
+          style={styles.optionsButton}
+        >
+          <MaterialIcons
+            name="more-vert"
+            size={theme.sizes.iconSmall}
+            color={theme.colors.textPrimary}
+          />
+        </TouchableOpacity>
+      </View>
 
-      {/* Options Menu */}
+      {/* Render Menu at the Root Level */}
       {menuVisible && (
-        <View style={styles.menu}>
+        <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
           <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() => {
-              setMenuVisible(false);
-              onDelete();
-            }}
-          >
-            <Text style={styles.menuText}>Delete</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() => {
-              setMenuVisible(false);
-              setIsEditing(true);
-            }}
-          >
-            <Text style={styles.menuText}>Edit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() => setMenuVisible(false)} // Close menu
-          >
-            <Text style={styles.menuText}>Cancel</Text>
-          </TouchableOpacity>
+            style={styles.overlay}
+            onPress={() => setMenuVisible(false)} // Close menu on outside press
+          />
+          <View style={styles.rootMenu}>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => {
+                setMenuVisible(false);
+                onDelete();
+              }}
+            >
+              <Text style={styles.menuText}>Delete</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => {
+                setMenuVisible(false);
+                setIsEditing(true);
+              }}
+            >
+              <Text style={styles.menuText}>Edit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => setMenuVisible(false)} // Close menu
+            >
+              <Text style={styles.menuText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
 
@@ -103,7 +114,7 @@ const PantryItem = ({ item, onDelete, onEdit }) => {
           </View>
         </Modal>
       )}
-    </View>
+    </>
   );
 };
 
@@ -131,20 +142,28 @@ const styles = StyleSheet.create({
   optionsButton: {
     padding: 5,
   },
-  menu: {
+  overlay: {
+    ...StyleSheet.absoluteFillObject, // Covers the entire screen
+    backgroundColor: "rgba(0,0,0,0.1)", // Slight overlay for clarity
+  },
+  rootMenu: {
     position: "absolute",
-    top: 30,
-    right: 10,
+    top: height * 0.06, // Adjust the position dynamically based on the button
+    right: 20,
     backgroundColor: theme.colors.backgroundPrimary,
-    borderRadius: 5,
+    borderRadius: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.25,
     shadowRadius: 4,
-    zIndex: 100,
+    elevation: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    zIndex: 10000,
   },
   menuItem: {
-    padding: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },
