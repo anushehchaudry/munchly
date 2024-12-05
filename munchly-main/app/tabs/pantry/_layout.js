@@ -55,10 +55,6 @@ const styles = StyleSheet.create({
     borderRadius: 20, // Rounded rectangle
     borderColor: "black",
     borderWidth: 0.8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
   },
   headerTitle: {
     fontSize: Theme.sizes.textLarge, // Slightly larger font

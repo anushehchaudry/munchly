@@ -9,6 +9,8 @@ export default function SearchLayout() {
       screenOptions={{
         headerStyle: { backgroundColor: Theme.colors.backgroundPrimary },
         headerTintColor: Theme.colors.textPrimary,
+        //headerBackTitleVisible: false,
+        headerBackButtonDisplayMode: "minimal",
       }}
     >
       <Stack.Screen

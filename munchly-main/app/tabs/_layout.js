@@ -38,7 +38,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="book" size={24} color={color} />
           ),
-          tabBarLabel: "Saved",
+          tabBarLabel: "Saved Recipes",
           headerShown: false, // Disable header at the Tabs level for profile stack
         }}
       />
