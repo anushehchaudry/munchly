@@ -7,11 +7,11 @@ import {
   StyleSheet,
   Modal,
   TouchableOpacity,
-  FlatList,
   ScrollView,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MaterialIcons } from "@expo/vector-icons";
 import theme from "@/assets/theme";
 import { FOOD_CATEGORIES } from "@/utils/constants";
 
@@ -94,56 +94,72 @@ const GroceryList = ({ visible, onClose, pantry, setPantry }) => {
     );
   };
 
+  const handleDeleteItem = (item) => {
+    const updatedGroceryList = groceryList.filter(
+      (groceryItem) => groceryItem.name !== item.name
+    );
+    setGroceryList(updatedGroceryList);
+    saveGroceryList(updatedGroceryList);
+  };
+
   return (
     <Modal visible={visible} animationType="slide" transparent={true}>
       <View style={styles.modalOverlay}>
         <View style={styles.modal}>
-          <Text style={styles.title}>Grocery List</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Item Name"
-            value={newItemName}
-            onChangeText={setNewItemName}
-            placeholderTextColor={theme.colors.textPrimary}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Quantity"
-            value={newItemQuantity}
-            onChangeText={setNewItemQuantity}
-            keyboardType="numeric"
-            placeholderTextColor={theme.colors.textPrimary}
-          />
-          <Picker
-            selectedValue={selectedCategory}
-            onValueChange={(itemValue) => setSelectedCategory(itemValue)}
-            style={styles.picker}
-          >
-            {FOOD_CATEGORIES.map((category) => (
-              <Picker.Item key={category} label={category} value={category} />
-            ))}
-          </Picker>
-          <Button
-            title="Add"
-            onPress={handleAddItem}
-            color={theme.colors.iconHighlighted}
-          />
-          <FlatList
-            data={groceryList}
-            keyExtractor={(item, index) => item.name + index}
-            renderItem={({ item }) => (
-              <View style={styles.groceryItem}>
+          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+            <Text style={styles.closeButtonText}>✖</Text>
+          </TouchableOpacity>
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <Text style={styles.title}>Grocery List</Text>
+            {groceryList.map((item, index) => (
+              <View key={index} style={styles.groceryItem}>
                 <Text style={styles.groceryItemText}>
                   {item.name} - {item.quantity}
                 </Text>
-                <TouchableOpacity onPress={() => handleCheckItem(item)}>
-                  <Text style={styles.checkButton}>✔</Text>
-                </TouchableOpacity>
+                <View style={styles.itemActions}>
+                  <TouchableOpacity onPress={() => handleCheckItem(item)}>
+                    <Text style={styles.checkButton}>✔</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => handleDeleteItem(item)}>
+                    <MaterialIcons
+                      name="delete"
+                      size={theme.sizes.iconMedium}
+                      color={theme.colors.iconHighlighted}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
-            )}
-            style={styles.list}
-          />
-          <Button title="Close" onPress={onClose} color="red" />
+            ))}
+            <Button
+              title="Add"
+              onPress={handleAddItem}
+              color={theme.colors.iconHighlighted}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Item Name"
+              value={newItemName}
+              onChangeText={setNewItemName}
+              placeholderTextColor={theme.colors.textPrimary}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Quantity"
+              value={newItemQuantity}
+              onChangeText={setNewItemQuantity}
+              keyboardType="numeric"
+              placeholderTextColor={theme.colors.textPrimary}
+            />
+            <Picker
+              selectedValue={selectedCategory}
+              onValueChange={(itemValue) => setSelectedCategory(itemValue)}
+              style={styles.picker}
+            >
+              {FOOD_CATEGORIES.map((category) => (
+                <Picker.Item key={category} label={category} value={category} />
+              ))}
+            </Picker>
+          </ScrollView>
         </View>
       </View>
     </Modal>
@@ -163,6 +179,19 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: "center",
     maxHeight: "80%", // Ensure the modal doesn't overflow
+  },
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    zIndex: 1,
+  },
+  closeButtonText: {
+    fontSize: 24,
+    color: "red",
+  },
+  scrollContainer: {
+    alignItems: "center",
   },
   title: {
     fontSize: theme.sizes.textLarge,
@@ -207,8 +236,9 @@ const styles = StyleSheet.create({
     fontSize: theme.sizes.textLarge,
     color: theme.colors.iconHighlighted,
   },
-  list: {
-    width: "100%",
+  itemActions: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
 
