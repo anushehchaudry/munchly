@@ -14,13 +14,13 @@ import {
   removeItem,
   saveItem,
 } from "../../../utils/asyncStorageUtils";
-import { useFocusEffect } from "@react-navigation/native"; 
+import { useFocusEffect } from "@react-navigation/native";
 import Theme from "../../../assets/theme";
 
 export default function Saved() {
   const [savedRecipes, setSavedRecipes] = useState([]);
-  const [flatListKey, setFlatListKey] = useState("grid"); 
-  const [activeTab, setActiveTab] = useState("TODO"); 
+  const [flatListKey, setFlatListKey] = useState("grid");
+  const [activeTab, setActiveTab] = useState("TODO");
 
   // Fetch saved recipes whenever the saved tab gains focus
   useFocusEffect(
@@ -30,7 +30,7 @@ export default function Saved() {
         setSavedRecipes(
           recipes.map((recipe) => ({
             ...recipe,
-            completed: recipe.completed || false, 
+            completed: recipe.completed || false,
           }))
         );
         setFlatListKey((prevKey) => (prevKey === "grid" ? "list" : "grid"));
@@ -40,7 +40,7 @@ export default function Saved() {
   );
 
   const markAsCompleted = async (recipe) => {
-    const updatedRecipe = { ...recipe, completed: true }; 
+    const updatedRecipe = { ...recipe, completed: true };
     await saveItem(updatedRecipe); // persist in asyncstorage
     setSavedRecipes((recipes) =>
       recipes.map((r) => (r.id === recipe.id ? updatedRecipe : r))
@@ -57,7 +57,7 @@ export default function Saved() {
   };
 
   const unsaveRecipe = async (recipeId) => {
-    await removeItem(recipeId); 
+    await removeItem(recipeId);
     setSavedRecipes((recipes) => recipes.filter((r) => r.id !== recipeId));
   };
 
@@ -106,11 +106,6 @@ export default function Saved() {
         backgroundColor={Theme.colors.iconPrimary}
         barStyle="light-content"
       />
-      <View style={styles.headerWrapper}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Saved Recipes</Text>
-        </View>
-      </View>
       <View style={styles.tabBar}>
         <TouchableOpacity
           style={[
@@ -124,7 +119,9 @@ export default function Saved() {
               styles.tabText,
               activeTab === "TODO" && styles.activeTabText,
             ]}
-          >TODO</Text>
+          >
+            TODO
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
@@ -138,7 +135,9 @@ export default function Saved() {
               styles.tabText,
               activeTab === "COMPLETED" && styles.activeTabText,
             ]}
-          >COMPLETED</Text>
+          >
+            COMPLETED
+          </Text>
         </TouchableOpacity>
       </View>
       <View style={styles.container}>
@@ -203,7 +202,7 @@ const styles = StyleSheet.create({
   },
   activeTabButton: {
     backgroundColor: Theme.colors.activeTab,
-    height: "100%"
+    height: "100%",
   },
   tabText: {
     fontSize: Theme.sizes.textMedium,
@@ -255,24 +254,30 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   completeButton: {
-    backgroundColor: Theme.colors.iconPrimary,
+    backgroundColor: Theme.colors.backgroundPrimary,
+    borderColor: Theme.colors.iconPrimary,
+    borderWidth: 2,
     padding: 8,
-    borderRadius: 20,
     marginBottom: 5,
+    borderRadius: 20,
   },
   todoButton: {
-    backgroundColor: Theme.colors.iconPrimary,
+    backgroundColor: Theme.colors.backgroundPrimary,
+    borderColor: Theme.colors.iconPrimary,
+    borderWidth: 2,
     padding: 8,
-    borderRadius: 20,
     marginBottom: 5,
+    borderRadius: 20,
   },
   unsaveButton: {
-    backgroundColor: Theme.colors.iconHighlighted,
+    backgroundColor: Theme.colors.backgroundPrimary,
+    borderColor: Theme.colors.iconPrimary,
+    borderWidth: 2,
     padding: 8,
     borderRadius: 20,
   },
   buttonText: {
-    color: "white",
+    color: "black",
     fontSize: 12,
     fontWeight: "bold",
     textAlign: "center",
