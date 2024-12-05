@@ -1,12 +1,11 @@
 import { useState } from "react";
 import getEnv from "./env";
-//import axios from "axios";
 
 const {
-  SPOONACULAR_API: { BASE_URL, SEARCH_RECIPES_API },
+  SPOONACULAR_API: { BASE_URL, SEARCH_RECIPES_API, RECIPE_DETAILS_API },
 } = getEnv();
 
-// Generic fetch function
+// Generic fetch function for search results
 export const fetchData = async (query, offset) => {
   try {
     const endpoint = SEARCH_RECIPES_API(query, offset + 20);
@@ -17,11 +16,26 @@ export const fetchData = async (query, offset) => {
     const data = await response.json();
     return data;
   } catch (err) {
-    //setError(err.message);
     console.error("Spoonacular API Error:", err);
     return null;
-  } finally {
-    //setLoading(false);
+  }
+};
+
+// Fetch function for recipe details
+export const fetchRecipeDetails = async (id) => {
+  try {
+    const endpoint = RECIPE_DETAILS_API(id);
+    const url = `${BASE_URL}${endpoint}`;
+    console.log("Fetching recipe details from URL:", url); // Add logging for debugging
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP Error: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error("Spoonacular API Error:", err);
+    return null;
   }
 };
 
@@ -36,7 +50,7 @@ const useSpoonacularApi = () => {
   const searchRecipes = async (query, number = 10) =>
     fetchData(SEARCH_RECIPES_API(query, number));
 
-  const getRecipeDetails = async (id) => fetchData(RECIPE_DETAILS_API(id));
+  const getRecipeDetails = async (id) => fetchRecipeDetails(id);
 
   return { getRandomRecipes, searchRecipes, getRecipeDetails, loading, error };
 };

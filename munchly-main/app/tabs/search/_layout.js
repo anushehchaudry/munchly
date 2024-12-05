@@ -2,10 +2,8 @@ import { Stack } from "expo-router";
 import { View, Text, Platform } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Theme from "@/assets/theme";
-import { useNavigation } from "@react-navigation/native";
 
 export default function SearchLayout() {
-  const navigation = useNavigation();
   return (
     <Stack
       screenOptions={{
@@ -41,10 +39,13 @@ export default function SearchLayout() {
         name="results"
         options={{
           headerTitle: "Results",
-          // headerShown: false,
-          //tabBarButton: () => null, // Hide tab bar for this screen
         }}
-        headerShown={true}
+      />
+      <Stack.Screen
+        name="RecipeDetails"
+        options={{
+          headerTitle: "Recipe Details",
+        }}
       />
     </Stack>
   );
