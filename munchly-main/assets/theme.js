@@ -7,6 +7,8 @@ export default {
 
     iconPrimary: "#9ab391",
     iconHighlighted: "#e3630a",
+
+    activeTab: "#3c896d",
   },
   sizes: {
     iconSmall: 16,

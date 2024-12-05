@@ -22,11 +22,10 @@ const windowWidth = Dimensions.get("window").width;
 const SearchResults = ({ id, title, image, isSaved, refreshRecipes }) => {
   const handleToggleSave = async () => {
     if (!isSaved) {
-      await saveItem({ id, title, image }); // Save item
+      await saveItem({ id, title, image }); 
     } else {
-      await removeItem(id); // Remove item
+      await removeItem(id); 
     }
-    // Trigger the parent refresh function
     refreshRecipes();
   };
 
@@ -66,18 +65,15 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 10,
     padding: 10,
-    //resizeMode: "cover",
   },
   rowContainer: {
-    flexDirection: "row", // Ensures items are aligned in a row
-    alignItems: "center", // Vertically aligns items
+    flexDirection: "row", 
+    alignItems: "center", 
   },
   recipeName: {
     flex: 1,
-    //paddingTop: 20,
     paddingLeft: 10,
     color: "black",
-    // alignItems: "flex-end",
     textAlign: "left",
     flexShrink: 1,
   },
@@ -95,21 +91,21 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 20,
-    borderWidth: 2, // Border to make unsaved state visually clear
+    borderWidth: 2, 
   },
   savedState: {
-    backgroundColor: Theme.colors.iconPrimary, // Current green background for toggled state
-    borderColor: Theme.colors.iconPrimary, // Match border to background
+    backgroundColor: Theme.colors.iconPrimary, 
+    borderColor: Theme.colors.iconPrimary, 
   },
   unsavedState: {
-    backgroundColor: "transparent", // No background for untoggled state
-    borderColor: "green", // Green border for untoggled state
+    backgroundColor: "transparent", 
+    borderColor: Theme.colors.iconPrimary, 
   },
   savedText: {
-    color: "white", // White text when toggled
+    color: "white", 
   },
   unsavedText: {
-    color: "black", // Black text when untoggled
+    color: "black", 
   },
   indexText: {
     color: "white",
@@ -121,10 +117,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 24,
     marginRight: 10,
-    // paddingTop: 10,
-    // paddingRight: 20,
-    // fontSize: 10,
-    // width: 10,
   },
   image: {
     width: windowWidth * 0.25,
@@ -142,8 +134,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     marginLeft: 10,
     justifyContent: "flex-start",
-    //flex: 1,
-    //width: 20,
   },
 
   songArtistText: {
