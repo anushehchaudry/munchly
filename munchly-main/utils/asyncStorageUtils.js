@@ -2,18 +2,31 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const STORAGE_KEY = "savedItems";
 
-// Save an item to AsyncStorage
 export const saveItem = async (item) => {
   try {
     const savedItems = await getSavedItems();
-    // Prevent duplicates
-    const alreadySaved = savedItems.some((savedItem) => savedItem.id === item.id);
-    if (!alreadySaved) {
-      const updatedItems = [...savedItems, item];
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedItems));
+    const updatedItems = savedItems.map((savedItem) =>
+      savedItem.id === item.id ? { ...savedItem, ...item } : savedItem
+    );
+    if (!savedItems.some((savedItem) => savedItem.id === item.id)) {
+      updatedItems.push(item); // Add new item if not already saved
     }
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedItems));
   } catch (error) {
     console.error("Error saving item:", error);
+  }
+};
+
+// Update an item's status
+export const updateItemStatus = async (itemId, newStatus) => {
+  try {
+    const savedItems = await getSavedItems();
+    const updatedItems = savedItems.map((item) =>
+      item.id === itemId ? { ...item, status: newStatus } : item
+    );
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedItems));
+  } catch (error) {
+    console.error("Error updating item status:", error);
   }
 };
 

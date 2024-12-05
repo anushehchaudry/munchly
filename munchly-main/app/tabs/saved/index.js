@@ -14,53 +14,54 @@ import {
   removeItem,
   saveItem,
 } from "../../../utils/asyncStorageUtils";
-import { useFocusEffect } from "@react-navigation/native"; // Hook to detect focus
+import { useFocusEffect } from "@react-navigation/native"; 
 import Theme from "../../../assets/theme";
 
 export default function Saved() {
-  const [savedItems, setSavedItems] = useState([]);
-  const [flatListKey, setFlatListKey] = useState("grid"); // Unique key to force re-render
-  const [activeTab, setActiveTab] = useState("TODO"); // Current tab: TODO or COMPLETED
+  const [savedRecipes, setSavedRecipes] = useState([]);
+  const [flatListKey, setFlatListKey] = useState("grid"); 
+  const [activeTab, setActiveTab] = useState("TODO"); 
 
-  // Fetch saved items whenever the tab gains focus
+  // Fetch saved recipes whenever the saved tab gains focus
   useFocusEffect(
     React.useCallback(() => {
-      const fetchSavedItems = async () => {
-        const items = await getSavedItems();
-        //console.log("Saved Items:", items); 
-        setSavedItems(
-          items.map((item) => ({ ...item, completed: item.completed || false }))
-        ); 
+      const fetchSavedRecipes = async () => {
+        const recipes = await getSavedItems();
+        setSavedRecipes(
+          recipes.map((recipe) => ({
+            ...recipe,
+            completed: recipe.completed || false, 
+          }))
+        );
         setFlatListKey((prevKey) => (prevKey === "grid" ? "list" : "grid"));
       };
-      fetchSavedItems();
+      fetchSavedRecipes();
     }, [])
   );
 
-  const markAsCompleted = async (item) => {
-    const updatedItem = { ...item, completed: true }; // Mark as completed
-    await saveItem(updatedItem);
-    const updatedItems = savedItems.map((i) =>
-      i.id === item.id ? updatedItem : i
+  const markAsCompleted = async (recipe) => {
+    const updatedRecipe = { ...recipe, completed: true }; 
+    await saveItem(updatedRecipe); // persist in asyncstorage
+    setSavedRecipes((recipes) =>
+      recipes.map((r) => (r.id === recipe.id ? updatedRecipe : r))
     );
-    setSavedItems(updatedItems);
   };
 
-  const moveToTodo = async (item) => {
-    const updatedItem = { ...item, completed: false }; // Move back to TODO
-    await saveItem(updatedItem);
-    const updatedItems = savedItems.map((i) =>
-      i.id === item.id ? updatedItem : i
+  // move back todo for 'make again!'
+  const moveToTodo = async (recipe) => {
+    const updatedRecipe = { ...recipe, completed: false };
+    await saveItem(updatedRecipe);
+    setSavedRecipes((recipes) =>
+      recipes.map((r) => (r.id === recipe.id ? updatedRecipe : r))
     );
-    setSavedItems(updatedItems);
   };
 
-  const unsaveItem = async (itemId) => {
-    await removeItem(itemId); // Remove item
-    const updatedItems = savedItems.filter((item) => item.id !== itemId);
-    setSavedItems(updatedItems);
+  const unsaveRecipe = async (recipeId) => {
+    await removeItem(recipeId); 
+    setSavedRecipes((recipes) => recipes.filter((r) => r.id !== recipeId));
   };
 
+  // grid format for layout
   const renderGridItem = ({ item }) => (
     <View style={styles.gridItem}>
       <Image source={{ uri: item.image }} style={styles.image} />
@@ -86,7 +87,7 @@ export default function Saved() {
         )}
         <TouchableOpacity
           style={styles.unsaveButton}
-          onPress={() => unsaveItem(item.id)}
+          onPress={() => unsaveRecipe(item.id)}
         >
           <Text style={styles.buttonText}>Unsave</Text>
         </TouchableOpacity>
@@ -94,10 +95,10 @@ export default function Saved() {
     </View>
   );
 
-  const filteredItems =
+  const filteredRecipes =
     activeTab === "TODO"
-      ? savedItems.filter((item) => !item.completed)
-      : savedItems.filter((item) => item.completed);
+      ? savedRecipes.filter((recipe) => !recipe.completed)
+      : savedRecipes.filter((recipe) => recipe.completed);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -105,8 +106,10 @@ export default function Saved() {
         backgroundColor={Theme.colors.iconPrimary}
         barStyle="light-content"
       />
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Saved Recipes</Text>
+      <View style={styles.headerWrapper}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Saved Recipes</Text>
+        </View>
       </View>
       <View style={styles.tabBar}>
         <TouchableOpacity
@@ -121,9 +124,7 @@ export default function Saved() {
               styles.tabText,
               activeTab === "TODO" && styles.activeTabText,
             ]}
-          >
-            TODO
-          </Text>
+          >TODO</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
@@ -137,13 +138,11 @@ export default function Saved() {
               styles.tabText,
               activeTab === "COMPLETED" && styles.activeTabText,
             ]}
-          >
-            COMPLETED
-          </Text>
+          >COMPLETED</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.container}>
-        {filteredItems.length === 0 ? (
+        {filteredRecipes.length === 0 ? (
           <Text style={styles.emptyText}>
             {activeTab === "TODO"
               ? "Save your first recipe!"
@@ -151,14 +150,14 @@ export default function Saved() {
           </Text>
         ) : (
           <FlatList
-            key={flatListKey} // Force re-render if needed
-            data={filteredItems}
+            key={flatListKey}
+            data={filteredRecipes}
             keyExtractor={(item, index) =>
               item.id ? item.id.toString() : index.toString()
-            } 
-            numColumns={2} // Keep this value constant for a grid
+            }
+            numColumns={2}
             renderItem={renderGridItem}
-            columnWrapperStyle={styles.row} 
+            columnWrapperStyle={styles.row}
           />
         )}
       </View>
@@ -169,48 +168,56 @@ export default function Saved() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: Theme.colors.iconPrimary, 
+    backgroundColor: Theme.colors.backgroundPrimary,
   },
-  container: {
-    flex: 1,
-    backgroundColor: Theme.colors.backgroundPrimary, 
-    padding: 16,
-    marginTop: -20,
+  headerWrapper: {
+    backgroundColor: Theme.colors.iconPrimary,
+    marginBottom: 10,
   },
   header: {
-    backgroundColor: Theme.colors.iconPrimary, 
     paddingVertical: 30,
-    paddingHorizontal: 16,
     justifyContent: "center",
     alignItems: "center",
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: Theme.sizes.textLarge,
     fontWeight: "bold",
     color: "white",
   },
   tabBar: {
     flexDirection: "row",
     justifyContent: "space-evenly",
-    backgroundColor: Theme.colors.cardBackground,
-    paddingVertical: 10,
+    backgroundColor: Theme.colors.iconPrimary,
+    borderwidth: 1,
+    borderRadius: 10,
+    padding: 5,
+    borderColor: Theme.colors.activeTab,
+    width: "100%",
+    alignSelf: "center",
   },
   tabButton: {
+    flex: 1,
     paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  activeTabButton: {
+    borderRadius: 10,
     backgroundColor: Theme.colors.iconPrimary,
   },
+  activeTabButton: {
+    backgroundColor: Theme.colors.activeTab,
+    height: "100%"
+  },
   tabText: {
-    fontSize: 16,
-    color: "gray",
+    fontSize: Theme.sizes.textMedium,
+    color: "white",
     textAlign: "center",
   },
   activeTabText: {
     color: "white",
     fontWeight: "bold",
+  },
+  container: {
+    flex: 1,
+    backgroundColor: Theme.colors.backgroundPrimary,
+    padding: 16,
   },
   emptyText: {
     fontSize: 18,
@@ -219,7 +226,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   row: {
-    justifyContent: "space-between", 
+    justifyContent: "space-between",
     marginBottom: 16,
   },
   gridItem: {
@@ -231,7 +238,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   image: {
-    width: 100, 
+    width: 100,
     height: 100,
     borderRadius: 8,
     marginBottom: 10,
@@ -250,19 +257,19 @@ const styles = StyleSheet.create({
   completeButton: {
     backgroundColor: Theme.colors.iconPrimary,
     padding: 8,
-    borderRadius: 8,
-    marginRight: 5,
+    borderRadius: 20,
+    marginBottom: 5,
   },
   todoButton: {
     backgroundColor: Theme.colors.iconPrimary,
     padding: 8,
-    borderRadius: 8,
-    marginRight: 5,
+    borderRadius: 20,
+    marginBottom: 5,
   },
   unsaveButton: {
-    backgroundColor: "red",
+    backgroundColor: Theme.colors.iconHighlighted,
     padding: 8,
-    borderRadius: 8,
+    borderRadius: 20,
   },
   buttonText: {
     color: "white",
