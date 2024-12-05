@@ -41,26 +41,27 @@ const CustomHeader = ({ options }) => {
 const styles = StyleSheet.create({
   headerBackground: {
     height: 120, // Adjust height based on design
-    justifyContent: "center",
+    justifyContent: "flex-end",
     alignItems: "center",
     backgroundColor: Theme.colors.iconPrimary,
+    paddingBottom: 20,
   },
   headerImage: {
     resizeMode: "cover",
   },
   titleContainer: {
-    backgroundColor: Theme.colors.iconPrimary, // Dark green background
+    backgroundColor: Theme.colors.backgroundPrimary, // Dark green background
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 20, // Rounded rectangle
-    borderColor: "black",
-    borderWidth: 0.8,
+    borderColor: Theme.colors.textPrimary,
+    borderWidth: 1.5,
   },
   headerTitle: {
     fontSize: Theme.sizes.textLarge, // Slightly larger font
     fontWeight: "bold",
     fontFamily: Theme.fonts.fontPrimary,
-    color: Theme.colors.backgroundPrimary, // Theme background color for text
+    color: Theme.colors.textPrimary, // Theme background color for text
     textAlign: "center",
   },
 });
