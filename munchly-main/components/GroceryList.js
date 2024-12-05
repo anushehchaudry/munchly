@@ -3,13 +3,12 @@ import {
   View,
   Text,
   TextInput,
-  Button,
+  TouchableOpacity,
   StyleSheet,
   Modal,
-  TouchableOpacity,
-  ScrollView,
+  FlatList,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import DropDownPicker from "react-native-dropdown-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialIcons } from "@expo/vector-icons";
 import theme from "@/assets/theme";
@@ -22,6 +21,10 @@ const GroceryList = ({ visible, onClose, pantry, setPantry }) => {
   const [newItemName, setNewItemName] = useState("");
   const [newItemQuantity, setNewItemQuantity] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(FOOD_CATEGORIES[0]);
+  const [open, setOpen] = useState(false);
+  const [categories, setCategories] = useState(
+    FOOD_CATEGORIES.map((category) => ({ label: category, value: category }))
+  );
 
   useEffect(() => {
     const loadGroceryList = async () => {
@@ -109,10 +112,57 @@ const GroceryList = ({ visible, onClose, pantry, setPantry }) => {
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Text style={styles.closeButtonText}>✖</Text>
           </TouchableOpacity>
-          <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <Text style={styles.title}>Grocery List</Text>
-            {groceryList.map((item, index) => (
-              <View key={index} style={styles.groceryItem}>
+          <Text style={styles.title}>Grocery List</Text>
+          {/* Input Section */}
+          <View style={styles.inputContainer}>
+            <DropDownPicker
+              open={open}
+              value={selectedCategory}
+              items={categories}
+              setOpen={setOpen}
+              setValue={setSelectedCategory}
+              setItems={setCategories}
+              placeholder="Select Category"
+              style={styles.dropdown}
+              dropDownContainerStyle={styles.dropdownContainer}
+              textStyle={styles.dropdownText}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Item Name"
+              value={newItemName}
+              onChangeText={setNewItemName}
+              placeholderTextColor={theme.colors.textPrimary}
+            />
+            <View style={styles.quantityAndButtonRow}>
+              <TextInput
+                style={styles.quantityInput}
+                placeholder="Quantity"
+                value={newItemQuantity}
+                onChangeText={setNewItemQuantity}
+                keyboardType="numeric"
+                placeholderTextColor={theme.colors.textPrimary}
+              />
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={handleAddItem}
+              >
+                <MaterialIcons
+                  name="add"
+                  size={18}
+                  color={theme.colors.backgroundPrimary}
+                />
+                <Text style={styles.addButtonText}>Add</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Grocery List Section */}
+          <FlatList
+            data={groceryList}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <View style={styles.groceryItem}>
                 <Text style={styles.groceryItemText}>
                   {item.name} - {item.quantity}
                 </Text>
@@ -129,37 +179,8 @@ const GroceryList = ({ visible, onClose, pantry, setPantry }) => {
                   </TouchableOpacity>
                 </View>
               </View>
-            ))}
-            <Button
-              title="Add"
-              onPress={handleAddItem}
-              color={theme.colors.iconHighlighted}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Item Name"
-              value={newItemName}
-              onChangeText={setNewItemName}
-              placeholderTextColor={theme.colors.textPrimary}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Quantity"
-              value={newItemQuantity}
-              onChangeText={setNewItemQuantity}
-              keyboardType="numeric"
-              placeholderTextColor={theme.colors.textPrimary}
-            />
-            <Picker
-              selectedValue={selectedCategory}
-              onValueChange={(itemValue) => setSelectedCategory(itemValue)}
-              style={styles.picker}
-            >
-              {FOOD_CATEGORIES.map((category) => (
-                <Picker.Item key={category} label={category} value={category} />
-              ))}
-            </Picker>
-          </ScrollView>
+            )}
+          />
         </View>
       </View>
     </Modal>
@@ -190,13 +211,30 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: "red",
   },
-  scrollContainer: {
-    alignItems: "center",
-  },
   title: {
-    fontSize: theme.sizes.textLarge,
+    fontSize: 24, // Larger font size
+    color: theme.colors.textPrimary, // Use primary text color
     fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 20,
+    fontFamily: theme.fonts.fontPrimary,
+  },
+  inputContainer: {
+    width: "100%",
+    marginBottom: 20,
+  },
+  dropdown: {
+    backgroundColor: theme.colors.backgroundPrimary,
+    borderColor: theme.colors.iconPrimary,
+    borderRadius: 5,
+    height: 50,
     marginBottom: 10,
+  },
+  dropdownContainer: {
+    backgroundColor: theme.colors.backgroundPrimary,
+    borderColor: theme.colors.iconPrimary,
+  },
+  dropdownText: {
     fontFamily: theme.fonts.fontPrimary,
     color: theme.colors.textPrimary,
   },
@@ -209,14 +247,43 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontFamily: theme.fonts.fontPrimary,
     color: theme.colors.textPrimary,
+    height: 40,
   },
-  picker: {
-    width: "100%",
+  quantityAndButtonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  quantityInput: {
+    flex: 1.0,
     borderWidth: 1,
     borderColor: theme.colors.iconPrimary,
     padding: 10,
     borderRadius: 5,
-    marginBottom: 10,
+    fontFamily: theme.fonts.fontPrimary,
+    color: theme.colors.textPrimary,
+    marginRight: 10,
+    height: 40,
+  },
+  addButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: theme.colors.iconHighlighted,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 2,
+    height: 40,
+  },
+  addButtonText: {
+    fontSize: theme.sizes.textMedium - 2,
+    color: theme.colors.backgroundPrimary,
+    fontWeight: "bold",
+    marginLeft: 4,
   },
   groceryItem: {
     flexDirection: "row",
