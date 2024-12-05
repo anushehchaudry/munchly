@@ -3,13 +3,12 @@ import {
   StyleSheet,
   Image,
   SafeAreaView,
-  FlatList,
-  ListItem,
   Text,
   View,
   TouchableOpacity,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React from "react";
+import axios from "axios";
 import {
   saveItem,
   removeItem,
@@ -17,42 +16,64 @@ import {
 } from "../utils/asyncStorageUtils";
 import getEnv from "../utils/env";
 import Theme from "@/assets/theme";
+import { useNavigation } from "@react-navigation/native";
+
 const windowWidth = Dimensions.get("window").width;
 
 const SearchResults = ({ id, title, image, isSaved, refreshRecipes }) => {
+  const navigation = useNavigation();
+  const {
+    SPOONACULAR_API: { BASE_URL, RECIPE_DETAILS_API },
+  } = getEnv();
+
   const handleToggleSave = async () => {
     if (!isSaved) {
-      await saveItem({ id, title, image }); 
+      await saveItem({ id, title, image });
     } else {
-      await removeItem(id); 
+      await removeItem(id);
     }
     refreshRecipes();
   };
 
+  const handlePress = async () => {
+    try {
+      const url = `${BASE_URL}${RECIPE_DETAILS_API(id)}`;
+      console.log("Fetching recipe details from URL:", url);
+      const response = await axios.get(url);
+      const recipeUrl = response.data.sourceUrl;
+      navigation.navigate("RecipeDetails", { id }); // Pass the id correctly
+    } catch (error) {
+      console.error("Error fetching recipe details:", error);
+    }
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.rowContainer}>
-        <Image source={{ uri: image }} style={styles.image} />
-        <View style={styles.recipeSave}>
-          <Text style={styles.recipeName} numberOfLines={3}>
-            {title}
-          </Text>
-          <TouchableOpacity
-            style={[
-              styles.saveButton,
-              isSaved ? styles.savedState : styles.unsavedState,
-            ]}
-            onPress={handleToggleSave}
-          >
-            <Text style={isSaved ? styles.savedText : styles.unsavedText}>
-              {isSaved ? "Saved!" : "Save"}
+    <TouchableOpacity onPress={handlePress}>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.rowContainer}>
+          <Image source={{ uri: image }} style={styles.image} />
+          <View style={styles.recipeSave}>
+            <Text style={styles.recipeName} numberOfLines={3}>
+              {title}
             </Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.saveButton,
+                isSaved ? styles.savedState : styles.unsavedState,
+              ]}
+              onPress={handleToggleSave}
+            >
+              <Text style={isSaved ? styles.savedText : styles.unsavedText}>
+                {isSaved ? "Saved!" : "Save"}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </TouchableOpacity>
   );
 };
+
 export default SearchResults;
 
 const styles = StyleSheet.create({
@@ -67,8 +88,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   rowContainer: {
-    flexDirection: "row", 
-    alignItems: "center", 
+    flexDirection: "row",
+    alignItems: "center",
   },
   recipeName: {
     flex: 1,
@@ -78,8 +99,6 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   recipeSave: {
-    // container for recipe title and save button
-    flex: 1,
     flexDirection: "column",
     justifyContent: "space-between",
     height: "100%",
@@ -91,81 +110,25 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 20,
-    borderWidth: 2, 
+    borderWidth: 2,
   },
   savedState: {
-    backgroundColor: Theme.colors.iconPrimary, 
-    borderColor: Theme.colors.iconPrimary, 
+    backgroundColor: Theme.colors.iconPrimary,
+    borderColor: Theme.colors.iconPrimary,
   },
   unsavedState: {
-    backgroundColor: "transparent", 
-    borderColor: Theme.colors.iconPrimary, 
+    backgroundColor: "transparent",
+    borderColor: Theme.colors.iconPrimary,
   },
   savedText: {
-    color: "white", 
+    color: "white",
   },
   unsavedText: {
-    color: "black", 
-  },
-  indexText: {
-    color: "white",
-    backgroundColor: Theme.colors.iconPrimary,
-    fontSize: 12,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    textAlign: "center",
-    lineHeight: 24,
-    marginRight: 10,
-  },
-  image: {
-    width: windowWidth * 0.25,
-    aspectRatio: 1,
-    borderRadius: 10,
-  },
-  mainText: {
-    color: "white",
-  },
-  subText: {
-    color: "gray",
-    padding: 20,
-  },
-  songArtistBlock: {
-    flexDirection: "column",
-    marginLeft: 10,
-    justifyContent: "flex-start",
-  },
-
-  songArtistText: {
-    paddingLeft: 5,
     color: "black",
   },
-  leftSide: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    width: windowWidth * 0.35,
-    paddingRight: 30,
-    flex: 1,
-  },
-  rightSide: {
-    paddingLeft: 10,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    paddingRight: 50,
-    marginRight: 30,
-    width: windowWidth * 0.15,
-  },
-  durationText: {
-    paddingLeft: 20,
-    color: "white",
-  },
-  albumNameMod: {
-    paddingLeft: 50,
-    marginLeft: 10,
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    width: windowWidth * 0.4,
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 10,
   },
 });

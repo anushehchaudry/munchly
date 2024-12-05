@@ -89,11 +89,13 @@ const PantryScreen = () => {
         onAdd={handleSaveItem}
         onCancel={() => setIsAdding(false)}
       />
-      <Button
-        title="Open Grocery List"
-        onPress={() => setIsGroceryListVisible(true)}
-        color={theme.colors.iconHighlighted}
-      />
+      {!isAdding && (
+        <Button
+          title="Open Grocery List"
+          onPress={() => setIsGroceryListVisible(true)}
+          color={theme.colors.iconHighlighted}
+        />
+      )}
       <GroceryList
         visible={isGroceryListVisible}
         onClose={() => setIsGroceryListVisible(false)}
