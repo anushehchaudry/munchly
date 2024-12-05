@@ -1,6 +1,5 @@
-// app/tabs/pantry/index.js
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Button } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import PantryList from "@/components/PantryList";
 import AddPantryItem from "@/components/AddPantryItem";
 import GroceryList from "@/components/GroceryList";
@@ -89,11 +88,14 @@ const PantryScreen = () => {
         onAdd={handleSaveItem}
         onCancel={() => setIsAdding(false)}
       />
-      <Button
-        title="Open Grocery List"
-        onPress={() => setIsGroceryListVisible(true)}
-        color={theme.colors.iconHighlighted}
-      />
+      {!isAdding && (
+        <TouchableOpacity
+          style={styles.groceryListButton}
+          onPress={() => setIsGroceryListVisible(true)}
+        >
+          <Text style={styles.groceryListText}>Open Grocery List</Text>
+        </TouchableOpacity>
+      )}
       <GroceryList
         visible={isGroceryListVisible}
         onClose={() => setIsGroceryListVisible(false)}
@@ -107,6 +109,30 @@ const PantryScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  groceryListButton: {
+    position: "absolute",
+    bottom: 10, // Position near the bottom
+    right: 10, // Align to the right
+    width: 150, // Adjust width for the tab style
+    height: 40, // Height for the tab
+    backgroundColor: theme.colors.backgroundPrimary, // Match theme
+    borderRadius: 20, // Rounded edges to look like a tab
+    borderWidth: 1,
+    borderColor: theme.colors.textPrimary,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3, // Elevation for Android shadow
+  },
+  groceryListText: {
+    color: theme.colors.textPrimary, // Text color matches theme
+    fontSize: theme.sizes.textSmall,
+    fontWeight: "bold",
+    fontFamily: theme.fonts.fontPrimary,
   },
 });
 
