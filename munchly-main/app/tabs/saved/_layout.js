@@ -7,11 +7,11 @@ export default function SavedLayout() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: Theme.colors.iconPrimary},
+        headerStyle: { backgroundColor: Theme.colors.iconPrimary },
         headerTintColor: "white",
         headerTitleStyle: {
-          fontSize: 20, 
-          fontWeight: "bold", 
+          fontSize: 20,
+          fontWeight: "bold",
         },
       }}
     >
@@ -21,6 +21,12 @@ export default function SavedLayout() {
           headerShown: false,
           // headerTitle: "Saved Recipes",
           // headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="RecipeDetails"
+        options={{
+          headerTitle: "Recipe Details",
         }}
       />
     </Stack>

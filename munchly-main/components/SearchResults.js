@@ -14,7 +14,7 @@ import {
   removeItem,
   getSavedItems,
 } from "../utils/asyncStorageUtils";
-import getEnv from "../utils/env";
+import getEnv from "@/utils/env";
 import Theme from "@/assets/theme";
 import { useNavigation } from "@react-navigation/native";
 

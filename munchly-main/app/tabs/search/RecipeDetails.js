@@ -6,10 +6,12 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
+  Dimensions,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import useSpoonacularApi from "@/utils/useSpoonacular";
 import Theme from "@/assets/theme";
+import RenderHTML from "react-native-render-html";
 
 const RecipeDetails = () => {
   const route = useRoute();
@@ -17,6 +19,7 @@ const RecipeDetails = () => {
   const { getRecipeDetails } = useSpoonacularApi();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
+  const windowWidth = Dimensions.get("window").width;
 
   useEffect(() => {
     const fetchRecipeDetails = async () => {
@@ -53,7 +56,10 @@ const RecipeDetails = () => {
     <ScrollView style={styles.container}>
       <Image source={{ uri: recipe.image }} style={styles.image} />
       <Text style={styles.title}>{recipe.title}</Text>
-      <Text style={styles.summary}>{recipe.summary}</Text>
+      <RenderHTML
+        contentWidth={windowWidth}
+        source={{ html: `<p>${recipe.summary}</p>` }}
+      />
       <Text style={styles.sectionTitle}>Ingredients</Text>
       {recipe.extendedIngredients.map((ingredient) => (
         <Text key={ingredient.id} style={styles.ingredient}>
