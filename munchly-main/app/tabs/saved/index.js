@@ -14,13 +14,19 @@ import {
   removeItem,
   saveItem,
 } from "../../../utils/asyncStorageUtils";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import Theme from "../../../assets/theme";
+import getEnv from "@/utils/env";
+import axios from "axios";
 
 export default function Saved() {
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [flatListKey, setFlatListKey] = useState("grid");
   const [activeTab, setActiveTab] = useState("TODO");
+  const navigation = useNavigation();
+  const {
+    SPOONACULAR_API: { BASE_URL, RECIPE_DETAILS_API },
+  } = getEnv();
 
   // Fetch saved recipes whenever the saved tab gains focus
   useFocusEffect(
@@ -61,38 +67,53 @@ export default function Saved() {
     setSavedRecipes((recipes) => recipes.filter((r) => r.id !== recipeId));
   };
 
+  // for clicking upon the recipe in the saved tab
+  const handlePress = async (id) => {
+    try {
+      const url = `${BASE_URL}${RECIPE_DETAILS_API(id)}`;
+      console.log("Fetching recipe details from URL:", url);
+      const response = await axios.get(url);
+      const recipeUrl = response.data.sourceUrl;
+      navigation.navigate("RecipeDetails", { id }); // Pass the id correctly
+    } catch (error) {
+      console.error("Error fetching recipe details:", error);
+    }
+  };
+
   // grid format for layout
   const renderGridItem = ({ item }) => (
-    <View style={styles.gridItem}>
-      <Image source={{ uri: item.image }} style={styles.image} />
-      <Text style={styles.title} numberOfLines={2}>
-        {item.title}
-      </Text>
-      <View style={styles.buttonRow}>
-        {!item.completed && (
+    <TouchableOpacity onPress={() => handlePress(item.id)}>
+      <View style={styles.gridItem}>
+        <Image source={{ uri: item.image }} style={styles.image} />
+        <Text style={styles.title} numberOfLines={2}>
+          {item.title}
+        </Text>
+        <View style={styles.buttonRow}>
+          {!item.completed && (
+            <TouchableOpacity
+              style={styles.completeButton}
+              onPress={() => markAsCompleted(item)}
+            >
+              <Text style={styles.buttonText}>Mark Completed</Text>
+            </TouchableOpacity>
+          )}
+          {item.completed && (
+            <TouchableOpacity
+              style={styles.todoButton}
+              onPress={() => moveToTodo(item)}
+            >
+              <Text style={styles.buttonText}>Make Again!</Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
-            style={styles.completeButton}
-            onPress={() => markAsCompleted(item)}
+            style={styles.unsaveButton}
+            onPress={() => unsaveRecipe(item.id)}
           >
-            <Text style={styles.buttonText}>Mark Completed</Text>
+            <Text style={styles.buttonText}>Unsave</Text>
           </TouchableOpacity>
-        )}
-        {item.completed && (
-          <TouchableOpacity
-            style={styles.todoButton}
-            onPress={() => moveToTodo(item)}
-          >
-            <Text style={styles.buttonText}>Make Again!</Text>
-          </TouchableOpacity>
-        )}
-        <TouchableOpacity
-          style={styles.unsaveButton}
-          onPress={() => unsaveRecipe(item.id)}
-        >
-          <Text style={styles.buttonText}>Unsave</Text>
-        </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   const filteredRecipes =
