@@ -1,5 +1,5 @@
-const API_KEY = "a89521b416b14651a73c955d6976174e";
-
+// const API_KEY = "a89521b416b14651a73c955d6976174e";
+const API_KEY = "0c9a5026590a4d25a1c811d8f67bb9db";
 const ENV = {
   SPOONACULAR_API: {
     BASE_URL: "https://api.spoonacular.com",

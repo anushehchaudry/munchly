@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   },
   rowContainer: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
   },
   recipeName: {
     flex: 1,
@@ -97,20 +97,24 @@ const styles = StyleSheet.create({
     color: "black",
     textAlign: "left",
     flexShrink: 1,
+    flexGrow: 1
   },
   recipeSave: {
+    flex: 1, 
     flexDirection: "column",
     justifyContent: "space-between",
     height: "100%",
+    marginLeft: 10,
     paddingTop: 10,
     paddingBottom: 10,
   },
   saveButton: {
-    alignSelf: "center",
+    alignSelf: "flex-start",
     paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingHorizontal: 40,
     borderRadius: 20,
     borderWidth: 2,
+    marginLeft: 10
   },
   savedState: {
     backgroundColor: Theme.colors.iconPrimary,
