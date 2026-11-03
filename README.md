@@ -38,7 +38,7 @@ npm install
 npx expo start      # then press i (iOS simulator), a (Android), or w (web)
 ```
 
-You'll need a Spoonacular API key and a Supabase project. Set them in `utils/env.js` and `database/db.js`.
+You'll need a free [Spoonacular API key](https://spoonacular.com/food-api/console). Copy `munchly-main/.env.example` to `munchly-main/.env` and add your key there. The `.env` file is git-ignored. The Supabase project settings live in `database/db.js`.
 
 ## Team
 

@@ -1,5 +1,5 @@
-// const API_KEY = "a89521b416b14651a73c955d6976174e";
-const API_KEY = "0c9a5026590a4d25a1c811d8f67bb9db";
+// Set EXPO_PUBLIC_SPOONACULAR_API_KEY in munchly-main/.env (see .env.example).
+const API_KEY = process.env.EXPO_PUBLIC_SPOONACULAR_API_KEY;
 const ENV = {
   SPOONACULAR_API: {
     BASE_URL: "https://api.spoonacular.com",
