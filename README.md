@@ -9,7 +9,7 @@
 - **Recipe details.** Ingredients, steps, and a formatted summary for each recipe.
 - **Grocery list.** Add what you need, including items that aren't in your pantry yet.
 - **Saved recipes.** Bookmark favorites to come back to.
-- **Accounts.** Sign in so your pantry and saved recipes follow you between devices.
+- **Stays on your phone.** The pantry, saved recipes, and grocery list are stored on the device.
 - **Themes.** Light and dark color themes.
 
 ## Tech stack
@@ -17,7 +17,7 @@
 | Layer | Tools |
 |---|---|
 | App | React Native, Expo (SDK 52), Expo Router (tab navigation) |
-| Data | Supabase (auth + database), AsyncStorage for local session state |
+| Data | AsyncStorage (on-device storage) |
 | Recipes | [Spoonacular API](https://spoonacular.com/food-api) |
 
 ## Repository layout
@@ -26,7 +26,7 @@
 munchly-main/
   app/          screens (Expo Router): tabs/search, tabs/pantry, tabs/saved
   components/   pantry list, grocery list, search results, loading/empty states
-  database/     Supabase client
+  database/     Supabase client (set up, but not used by the app yet)
   utils/        Spoonacular hooks, session hook, storage helpers
 ```
 
@@ -38,7 +38,7 @@ npm install
 npx expo start      # then press i (iOS simulator), a (Android), or w (web)
 ```
 
-You'll need a free [Spoonacular API key](https://spoonacular.com/food-api/console). Copy `munchly-main/.env.example` to `munchly-main/.env` and add your key there. The `.env` file is git-ignored. The Supabase project settings live in `database/db.js`.
+You'll need a free [Spoonacular API key](https://spoonacular.com/food-api/console). Copy `munchly-main/.env.example` to `munchly-main/.env` and add your key there. The `.env` file is git-ignored.
 
 ## Team
 
